@@ -6,9 +6,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import com.bci.userbci.model.entity.User;
-import com.bci.userbci.model.entity.Phone;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,18 +15,13 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public User updateUser(User userEdit) {
-        return null;
-    }
-
-    @Override
     public List<User> getAllUsers() {
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
 
         Root<User> users = criteriaQuery.from(User.class);
-        criteriaQuery.select(users).where(criteriaBuilder.equal(users.get("isDeleted"), false));;
+        criteriaQuery.select(users).where(criteriaBuilder.equal(users.get("isActive"), true));;
 
         try {
             return entityManager.createQuery(criteriaQuery).getResultList();
@@ -36,30 +29,9 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
             return null; // Handle no result found case
         }
     }
-
-    @Override
-    public User getUserByName(String name) {
-
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
-        Root<User> users = criteriaQuery.from(User.class);
-        // Conditions
-        criteriaQuery.where(
-                criteriaBuilder.and(
-                        criteriaBuilder.equal(users.get("isDeleted"), false),
-                        criteriaBuilder.equal(users.get("name"), name)
-                )
-        );
-
-        try {
-            return entityManager.createQuery(criteriaQuery).getSingleResult();
-        } catch (NoResultException e) {
-            return null; // Handle no result found case
-        }
-    }
     @Transactional
     @Override
-    public User getUserByEmail(String email) {
+    public User findByEmail(String email) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
 
@@ -72,7 +44,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
         // Conditions
         criteriaQuery.where(
                 criteriaBuilder.and(
-                        criteriaBuilder.equal(userRoot.get("isDeleted"), false),
+                        criteriaBuilder.equal(userRoot.get("isActive"), true),
                         criteriaBuilder.equal(userRoot.get("email"), email)
                 )
         );
@@ -100,7 +72,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
         // Conditions
         criteriaQuery.where(
                 criteriaBuilder.and(
-                        criteriaBuilder.equal(users.get("isDeleted"), false),
+                        criteriaBuilder.equal(users.get("isActive"), true),
                         criteriaBuilder.equal(users.get("userId"), userId)
                 )
         );
