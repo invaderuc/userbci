@@ -1,21 +1,20 @@
 package com.bci.userbci.model.dto;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
+import com.bci.userbci.model.entity.Phone;
+import com.bci.userbci.model.entity.User;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import com.bci.userbci.model.entity.Phone;
-import com.bci.userbci.model.entity.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import jakarta.validation.constraints.Email;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,11 +24,12 @@ public class UserRequest {
 
     @NotEmpty(message = "El nombre del usuario es obligatorio")
     private String name;
-
-    @NotEmpty(message = "El email del usuario es obligatorio")
-    @Email(message = "El email no es valido")
+    @NotNull
+    @Email(message = "Email debe ser valido")
     private String email;
-
+    @NotEmpty(message = "Password es obligatorio")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[A-Z]).+$", message = "Password debe tener mínimo un número y una letra mayuscula")
+    @Size(min = 6, max = 64)
     @NotEmpty(message = "El password del usuario es obligatorio")
     private String password;
 

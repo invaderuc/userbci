@@ -3,7 +3,6 @@ package com.bci.userbci.service.impl;
 import com.bci.userbci.model.dto.LoginRequest;
 import com.bci.userbci.model.dto.LoginResponse;
 import com.bci.userbci.model.entity.Phone;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.bci.userbci.model.dto.UserRequest;
@@ -63,7 +62,7 @@ public class UserServiceImpl implements IUserService {
             LoginResponse dto = new LoginResponse();
 
             dto.setToken(UUID.randomUUID());
-            dto.setMessage("Welcome");
+            dto.setMessage("Bienvenido");
             user.setLastLogin(LocalDateTime.now());
 
             user.setLastLogin(LocalDateTime.now());
@@ -99,37 +98,37 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     public User updateUser(UserRequest userRequest) {
 
-        User user = userRepository.findByEmail(userRequest.getEmail()).orElseThrow(() -> new IllegalArgumentException("User with email " + email + " does not exist."));;
+        User user = userRepository.findByEmail(userRequest.getEmail());
         if(user != null) {
             user.setName(userRequest.getName());
 
-            // Update phones
+            // Telefonos nuevos y viejos
             Map<UUID, Phone> idToNewPhone = userRequest.getPhones().stream().collect(Collectors.toMap(Phone::getPhoneId, Function.identity()));
             Map<UUID, Phone> idToExistingPhone = user.getPhones().stream().collect(Collectors.toMap(Phone::getPhoneId, Function.identity()));
 
-            // Check for phones that need to be deleted or updated
+            // Telefonos a actualizar o eliminar
             List<Phone> phonesToDelete = new ArrayList<>();
             for (UUID id : idToExistingPhone.keySet()) {
                 if (idToNewPhone.containsKey(id)) {
-                    // Phone needs to be updated
+                    // telefonos para actualizar
                     idToExistingPhone.get(id).setPhoneNumber(idToNewPhone.get(id).getPhoneNumber());
                 } else {
-                    // Phone needs to be deleted
+                    // telefonos para eliminar
                     phonesToDelete.add(idToExistingPhone.get(id));
                 }
             }
 
-            // Check for phones that need to be added
+            // telefonos a agregar
             for (UUID id : idToNewPhone.keySet()) {
                 if (!idToExistingPhone.containsKey(id)) {
-                    // Phone needs to be added
+                    // agregar
                     Phone newPhone = idToNewPhone.get(id);
                     newPhone.setUser(user);
                     user.getPhones().add(newPhone);
                 }
             }
 
-            // Delete phones not present in the updated list
+            // Eliminar telefonos
             for (Phone phoneToDelete : phonesToDelete) {
                 user.getPhones().remove(phoneToDelete);
                 phoneToDelete.setUser(null);

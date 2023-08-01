@@ -103,7 +103,7 @@ public class DetailError {
 
         List<DetailError> detailsErrores = new ArrayList<>();
         DetailError detail = new DetailError();
-        detail.setMensaje("No encontrador");
+        detail.setMensaje("No existe");
 
         detailsErrores.add(detail);
 

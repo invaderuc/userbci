@@ -2,20 +2,25 @@ package com.bci.userbci.controller;
 
 import com.bci.userbci.model.dto.LoginRequest;
 import com.bci.userbci.model.dto.LoginResponse;
+import com.bci.userbci.model.dto.MessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import com.bci.userbci.model.dto.UserRequest;
 import com.bci.userbci.model.entity.User;
 import com.bci.userbci.service.impl.UserServiceImpl;
+
 import java.util.UUID;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -62,12 +67,12 @@ public class UserController  {
     //GET localhost:8080/users/3
     @GetMapping("/{id}")
     @Operation(summary = "Treae usuario por UUID")
-    public ResponseEntity<UserRequest> getUser(@PathVariable("id") UUID userId){
+    public ResponseEntity<?> getUser(@PathVariable("id") UUID userId){
 
         UserRequest user = userService.getUser(userId);
 
         if (user == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(404).body(new MessageResponse("Usuario no encontrado"));
         }
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
@@ -75,29 +80,39 @@ public class UserController  {
     //post localhost:8080/users/
     @PostMapping("/")
     @Operation(summary = "Guardar usuarios")
-    public ResponseEntity<?> insertUser (@Valid @RequestBody UserRequest userRequest){
+    public ResponseEntity<?> insertUser (@Valid @RequestBody UserRequest userRequest, BindingResult result){
 
-        UserRequest user = userService.insertUser(userRequest);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+        if (result.hasErrors()) {
+            List<String> errors2 = result.getAllErrors()
+                    .stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.status(400).body(new MessageResponse(errors2.toString()));
+        }else{
+            UserRequest user = userService.insertUser(userRequest);
+            return new ResponseEntity<>(user, HttpStatus.CREATED);
+        }
+
     }
 
     //PUT localhost:8080/users/
     @PutMapping("/")
     @Operation(summary = "Actualizar Usuario")
-    public ResponseEntity<UserRequest> updateUser(@RequestBody UserRequest userRequest){
+    public ResponseEntity<?> updateUser(@RequestBody UserRequest userRequest){
 
         User user = userService.updateUser(userRequest);
-        if(user == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if(user == null) return ResponseEntity.status(404).body(new MessageResponse("Usuario no encontrado"));
 
         return new ResponseEntity<>(userRequest, HttpStatus.ACCEPTED);
     }
     @Operation(summary = "Eliminar con soft Delete")
     @DeleteMapping("/{id}")
-    public ResponseEntity<UserRequest> deleteUser(@PathVariable("id") UUID userId){
+    public ResponseEntity<?> deleteUser(@PathVariable("id") UUID userId){
 
         UserRequest user = userService.getUser(userId);
 
-        if (user == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (user == null) return ResponseEntity.status(404).body(new MessageResponse("Usuario no encontrado"));
 
         userService.deleteUser(userId);
 
@@ -105,9 +120,11 @@ public class UserController  {
     }
     @PostMapping("/login")
     @Operation(summary = "Login usuarios")
-    public ResponseEntity<LoginResponse> login (@Valid @RequestBody LoginRequest loginRequest){
+    public ResponseEntity<?> login (@Valid @RequestBody LoginRequest loginRequest){
 
         LoginResponse response = userService.validarLogin(loginRequest);
+
+        if (response == null) return ResponseEntity.status(404).body(new MessageResponse("Usuario no encontrado"));
 
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }

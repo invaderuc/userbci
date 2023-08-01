@@ -19,7 +19,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\":\"gerard\",\n    \"email\":\"gerarducgmail.com\",\n    \"password\":\"escalab\",\n    \"phones\": [\n        {\n            \"phoneNumber\": \"1\",\n            \"cityCode\": \"1\",\n            \"countryCode\": \"1\"\n        }\n    ]\n}"
+					"raw": "{\n    \"name\":\"gerard\",\n    \"email\":\"gerarduc@gmail.com\",\n    \"password\":\"Escalab1\",\n    \"phones\": [\n        {\n            \"phoneNumber\": \"1\",\n            \"cityCode\": \"1\",\n            \"countryCode\": \"1\"\n        }\n    ]\n}"
 				},
 				"url": {
 					"raw": "http://localhost:8080/users/",
@@ -102,7 +102,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8080/users/90560535-217f-4102-a121-fee5adc1b41c",
+					"raw": "http://localhost:8080/users/edaf2486-12ca-49c2-affa-c51bcaed23bb",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -110,7 +110,7 @@
 					"port": "8080",
 					"path": [
 						"users",
-						"90560535-217f-4102-a121-fee5adc1b41c"
+						"edaf2486-12ca-49c2-affa-c51bcaed23bb"
 					]
 				}
 			},

@@ -1,6 +1,7 @@
 package com.bci.userbci.commons.exceptions;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.NoResultException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,5 +64,22 @@ public class UserExceptionHandler {
         );
 
         return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(NoResultException.class)
+    public ResponseEntity<Object> handleNoResultException(NoResultException e, WebRequest request) {
+
+        List<DetailError> detailsErrores = new ArrayList<>();
+        DetailError detail = new DetailError();
+        detailsErrores.add(detail);
+
+        ErrorHttp message = new ErrorHttp(
+                HttpStatus.NOT_FOUND.value(),
+                LocalDateTime.now(),
+                DetailError.mapFoundError(),
+                request.getDescription(false)
+        );
+
+        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 }

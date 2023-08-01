@@ -3,6 +3,8 @@ package com.bci.userbci.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,7 +41,6 @@ public class User implements Serializable  {
     @NotEmpty(message = "El Correo es Obligatorio")
     @Column(nullable = false, unique = true)
     private String email;
-    @NotEmpty(message = "El Email es Password")
     @Column(nullable = false)
     private String password;
     @Column(name = "is_active")
