@@ -4,8 +4,8 @@ API related to BCI Test
 <!-- GETTING STARTED -->
 ## Bienvenido
 
-A continuación revisaremos los pasos necesarios para ejecutar de forma correcta el proyecto de curso
-"Java Fundamentals course"
+A continuación revisaremos los pasos necesarios para ejecutar de forma correcta el proyecto BCI
+
 ### Prerrequisitos
 1. Java
 2. Postman
